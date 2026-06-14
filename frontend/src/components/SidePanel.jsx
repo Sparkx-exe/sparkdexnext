@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Heart, Clock, Settings, Sun, Moon, MoonStar, X, LayoutGrid } from 'lucide-react';
+import { Heart, Clock, Settings, Sun, Moon, MoonStar, X, LayoutGrid, Download } from 'lucide-react';
 
 const Github = ({ size = 20, ...props }) => (
   <svg
@@ -157,6 +157,21 @@ export const SidePanel = () => {
             <Settings size={20} className="nav-icon text-settings" />
             <span>Settings</span>
           </button>
+
+          <a 
+            href="https://github.com/Sparkx-exe/Sparkdex/releases/download/v1.0/Sparkdex.apk"
+            className="nav-item"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => {
+              if (window.innerWidth < 1024) {
+                setSidePanelOpen(false);
+              }
+            }}
+          >
+            <Download size={20} className="nav-icon text-download" />
+            <span>Download App</span>
+          </a>
 
           <div className="nav-divider" />
 
