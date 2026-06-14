@@ -1,0 +1,58 @@
+/* Design System Colors and Fonts */
+:root {
+  /* Default Dark Mode Theme */
+  --bg-primary: #0A0D14;
+  --bg-secondary: #0F1420;
+  --bg-tertiary: #161C2E;
+  --bg-glass: rgba(15, 20, 32, 0.72);
+  --text-primary: #F0F4FF;
+  --text-secondary: #8A94B0;
+  --text-muted: #4A526E;
+  --border-subtle: rgba(255, 255, 255, 0.06);
+
+  /* Constants across themes */
+  --accent-primary: #FF6B2B;
+  --accent-glow: #FF9F4A;
+  --accent-subtle: rgba(255, 107, 43, 0.12);
+  --border-glow: rgba(255, 107, 43, 0.3);
+  --success: #2ECC9A;
+  --error: #FF4C6A;
+  --accent-gradient: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-glow) 100%);
+
+  /* Typography */
+  --font-logo: 'Rajdhani', 'Oxanium', sans-serif;
+  --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-body: 'Nunito', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Dimensions */
+  --topbar-height: 80px;
+  --topbar-height-compressed: 64px;
+  --sidepanel-width: 280px;
+  --max-width-desktop: 1440px;
+  --reader-max-width: 800px;
+}
+
+/* AMOLED Black Theme */
+body.theme-amoled {
+  --bg-primary: #000000;
+  --bg-secondary: #0A0A0C;
+  --bg-tertiary: #121216;
+  --bg-glass: rgba(0, 0, 0, 0.85);
+  --text-primary: #FFFFFF;
+  --text-secondary: #A3AFC9;
+  --text-muted: #555E7A;
+  --border-subtle: rgba(255, 255, 255, 0.04);
+}
+
+/* Dim Theme */
+body.theme-dim {
+  --bg-primary: #1C2033;
+  --bg-secondary: #242942;
+  --bg-tertiary: #2F3656;
+  --bg-glass: rgba(28, 32, 51, 0.75);
+  --text-primary: #FAF8F5;
+  --text-secondary: #9AA6C4;
+  --text-muted: #5B6382;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+}
