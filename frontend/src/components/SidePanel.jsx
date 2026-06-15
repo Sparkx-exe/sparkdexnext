@@ -40,15 +40,13 @@ const Instagram = ({ size = 20, ...props }) => (
 );
 import { useSettingsStore } from '../store/settings';
 
-export const SidePanel = () => {
+export const SidePanel = ({ isSidePanelOpen, setSidePanelOpen }) => {
   const navigate = useNavigate();
   const location = useLocation();
   
   const {
     theme,
-    setTheme,
-    isSidePanelOpen,
-    setSidePanelOpen
+    setTheme
   } = useSettingsStore();
 
   // Swipe to close panel on mobile/tablet viewports

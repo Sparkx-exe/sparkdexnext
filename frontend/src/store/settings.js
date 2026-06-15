@@ -22,7 +22,6 @@ export const useSettingsStore = create(
       imageQuality: 'standard', // 'data-saver' | 'standard' | 'high'
       
       // UI State
-      isSidePanelOpen: false,
       isFilterDrawerOpen: false,
       isSearchModalOpen: false,
       
@@ -35,7 +34,6 @@ export const useSettingsStore = create(
       setImageQuality: (quality) => set({ imageQuality: quality }),
       
       // UI actions
-      setSidePanelOpen: (isOpen) => set({ isSidePanelOpen: isOpen }),
       setFilterDrawerOpen: (isOpen) => set({ isFilterDrawerOpen: isOpen }),
       setSearchModalOpen: (isOpen) => set({ isSearchModalOpen: isOpen }),
       

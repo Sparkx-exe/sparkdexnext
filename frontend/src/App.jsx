@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import ThemeProvider from './components/ThemeProvider';
@@ -45,7 +45,21 @@ function TitleHandler() {
 function AppLayout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const isSidePanelOpen = useSettingsStore((state) => state.isSidePanelOpen);
+  
+  // Set default side panel state using useState: false on mobile (< 768px), true on desktop/tablet (>= 768px)
+  const [isSidePanelOpen, setIsSidePanelOpenState] = useState(() => window.innerWidth >= 768);
+  const lastClosedTime = useRef(0);
+
+  const setSidePanelOpen = useCallback((isOpen) => {
+    if (!isOpen) {
+      lastClosedTime.current = Date.now();
+      setIsSidePanelOpenState(false);
+    } else {
+      // Debounce guard to prevent click-through reopen stutter
+      if (Date.now() - lastClosedTime.current < 400) return;
+      setIsSidePanelOpenState(true);
+    }
+  }, []);
   
   // Detect if we are in chapter reader mode (manga/:mangaId/chapter/:chapterId)
   const isReaderRoute = /^\/manga\/[^/]+\/chapter\/[^/]+/.test(location.pathname);
@@ -64,8 +78,8 @@ function AppLayout() {
       {/* Render chrome only if not in reading mode */}
       {!isReaderRoute && (
         <>
-          <TopBar />
-          <SidePanel />
+          <TopBar isSidePanelOpen={isSidePanelOpen} setSidePanelOpen={setSidePanelOpen} />
+          <SidePanel isSidePanelOpen={isSidePanelOpen} setSidePanelOpen={setSidePanelOpen} />
         </>
       )}
 

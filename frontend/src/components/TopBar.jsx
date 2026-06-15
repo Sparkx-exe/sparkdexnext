@@ -3,13 +3,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, Search, SlidersHorizontal, X } from 'lucide-react';
 import { useSettingsStore } from '../store/settings';
 
-export const TopBar = () => {
+export const TopBar = ({ isSidePanelOpen, setSidePanelOpen }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const {
-    isSidePanelOpen,
-    setSidePanelOpen,
     isFilterDrawerOpen,
     setFilterDrawerOpen,
     getActiveFiltersCount
@@ -185,7 +183,13 @@ export const TopBar = () => {
 
           <button
             className={`icon-button hamburger-btn ${isSidePanelOpen ? 'panel-open' : ''}`}
-            onClick={() => setSidePanelOpen(!isSidePanelOpen)}
+            onClick={() => {
+              if (window.innerWidth < 1024 && isSidePanelOpen) return;
+              setSidePanelOpen(!isSidePanelOpen);
+            }}
+            style={{
+              pointerEvents: (window.innerWidth < 1024 && isSidePanelOpen) ? 'none' : 'auto'
+            }}
             aria-label="Toggle Navigation Side Panel"
           >
             <Menu size={22} />

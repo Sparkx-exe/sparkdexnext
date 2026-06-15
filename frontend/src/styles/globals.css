@@ -704,7 +704,8 @@ input:checked + .switch-slider:before {
   top: 0;
   right: 0;
   width: var(--sidepanel-width);
-  height: 100vh;
+  height: 100vh; /* Fallback */
+  height: 100dvh;
   z-index: 110;
   display: flex;
   flex-direction: column;
@@ -713,6 +714,10 @@ input:checked + .switch-slider:before {
   border-right: none;
   transform: translateX(100%);
   transition: transform 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.sidepanel.collapsed {
+  transform: translateX(100%);
 }
 
 @media (min-width: 1024px) {
@@ -3840,7 +3845,6 @@ input:checked + .switch-slider:before {
 .manga-card-image,
 .glass-panel,
 .top-bar,
-.sidepanel,
 .sidepanel-close-btn,
 .filter-drawer,
 .banner-carousel-container,
