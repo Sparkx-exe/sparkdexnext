@@ -51,6 +51,39 @@ export const SidePanel = () => {
     setSidePanelOpen
   } = useSettingsStore();
 
+  // Swipe to close panel on mobile/tablet viewports
+  React.useEffect(() => {
+    if (!isSidePanelOpen || window.innerWidth >= 1024) return;
+
+    let startX = 0;
+    let startY = 0;
+
+    const handleTouchStart = (e) => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    };
+
+    const handleTouchEnd = (e) => {
+      const endX = e.changedTouches[0].clientX;
+      const endY = e.changedTouches[0].clientY;
+      const diffX = endX - startX;
+      const diffY = endY - startY;
+
+      // Swipe right (towards screen edge) to close
+      if (diffX > 60 && Math.abs(diffY) < 50) {
+        setSidePanelOpen(false);
+      }
+    };
+
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+    return () => {
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [isSidePanelOpen, setSidePanelOpen]);
+
   const handleNavigate = (path) => {
     navigate(path);
     // On mobile, close side panel when navigating

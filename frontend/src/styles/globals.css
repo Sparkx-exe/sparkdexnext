@@ -736,14 +736,22 @@ input:checked + .switch-slider:before {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   color: var(--text-secondary);
-  border: 1px solid transparent;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  z-index: 10;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease !important;
+}
+
+.sidepanel-close-btn:active {
+  transform: scale(0.9);
 }
 
 @media (hover: hover) {
