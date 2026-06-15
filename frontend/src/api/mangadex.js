@@ -123,9 +123,14 @@ export const getMangaFeed = async (id, params = {}) => {
   query.append('limit', params.limit || '100');
   query.append('offset', params.offset || '0');
 
+  // If languages are specified, filter by them. Empty array = 'all languages' (no filter).
   if (params.languages && params.languages.length > 0) {
-    params.languages.forEach((lang) => query.append('translatedLanguage[]', lang));
+    // Special sentinel: ['all'] means fetch all languages, so skip filter
+    if (!(params.languages.length === 1 && params.languages[0] === 'all')) {
+      params.languages.forEach((lang) => query.append('translatedLanguage[]', lang));
+    }
   } else {
+    // Default to English when nothing specified to maintain backward compat
     query.append('translatedLanguage[]', 'en');
   }
 

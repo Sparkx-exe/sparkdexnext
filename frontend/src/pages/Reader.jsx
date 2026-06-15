@@ -217,29 +217,38 @@ const Reader = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [readMode, currentPage, pages.length, nextChapter, navigate, mangaId, loading]);
 
-  // Scroll spy for vertical scroll progress
+  // Scroll spy for vertical scroll progress using IntersectionObserver
   useEffect(() => {
     if (readMode !== 'vertical' || pages.length === 0 || loading) return;
 
-    const handleScroll = () => {
-      const scrollPos = window.scrollY + window.innerHeight / 3;
-      
-      // Check which page is currently centered
-      for (let i = 0; i < pageRefs.current.length; i++) {
-        const ref = pageRefs.current[i];
-        if (ref) {
-          const top = ref.offsetTop;
-          const bottom = top + ref.offsetHeight;
-          if (scrollPos >= top && scrollPos <= bottom) {
-            setCurrentPage(i + 1);
-            break;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = pageRefs.current.indexOf(entry.target);
+            if (index !== -1) {
+              setCurrentPage(index + 1);
+            }
           }
-        }
+        });
+      },
+      {
+        root: null,
+        rootMargin: '-20% 0px -60% 0px',
+        threshold: 0,
       }
-    };
+    );
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const currentRefs = pageRefs.current;
+    currentRefs.forEach((ref) => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => {
+      currentRefs.forEach((ref) => {
+        if (ref) observer.unobserve(ref);
+      });
+    };
   }, [readMode, pages.length, loading]);
 
   // Scroll page to top on chapter change

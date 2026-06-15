@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation, NavLink, useNavigate } from 'react-router-dom';
-import { Home as HomeIcon, Heart, Clock, Settings as SettingsIcon, ChevronLeft, LayoutGrid } from 'lucide-react';
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { ChevronLeft } from 'lucide-react';
 import ThemeProvider from './components/ThemeProvider';
 import TopBar from './components/TopBar';
 import SidePanel from './components/SidePanel';
@@ -97,31 +97,6 @@ function AppLayout() {
         </Routes>
       </main>
 
-      {/* Mobile Bottom Navigation */}
-      {!isReaderRoute && (
-        <nav className="mobile-bottom-nav glass-panel">
-          <NavLink to="/" end className={({ isActive }) => `mobile-nav-btn ${isActive ? 'active' : ''}`}>
-            <HomeIcon size={20} />
-            <span>Home</span>
-          </NavLink>
-          <NavLink to="/categories" className={({ isActive }) => `mobile-nav-btn ${isActive ? 'active' : ''}`}>
-            <LayoutGrid size={20} />
-            <span>Categories</span>
-          </NavLink>
-          <NavLink to="/favourites" className={({ isActive }) => `mobile-nav-btn ${isActive ? 'active' : ''}`}>
-            <Heart size={20} />
-            <span>Favourites</span>
-          </NavLink>
-          <NavLink to="/history" className={({ isActive }) => `mobile-nav-btn ${isActive ? 'active' : ''}`}>
-            <Clock size={20} />
-            <span>History</span>
-          </NavLink>
-          <NavLink to="/settings" className={({ isActive }) => `mobile-nav-btn ${isActive ? 'active' : ''}`}>
-            <SettingsIcon size={20} />
-            <span>Settings</span>
-          </NavLink>
-        </nav>
-      )}
     </div>
   );
 }

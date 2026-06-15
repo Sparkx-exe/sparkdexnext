@@ -5,6 +5,12 @@ export const usePullToRefresh = (onRefresh) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const startY = useRef(0);
   const active = useRef(false);
+  const pullProgressRef = useRef(0);
+
+  // Sync ref with progress state changes
+  useEffect(() => {
+    pullProgressRef.current = pullProgress;
+  }, [pullProgress]);
 
   useEffect(() => {
     // Only enable on mobile viewports
@@ -40,7 +46,8 @@ export const usePullToRefresh = (onRefresh) => {
       if (!active.current) return;
       active.current = false;
 
-      if (pullProgress >= 65) {
+      const progress = pullProgressRef.current;
+      if (progress >= 65) {
         setIsRefreshing(true);
         setPullProgress(65); // Lock at loading offset
         
@@ -65,7 +72,7 @@ export const usePullToRefresh = (onRefresh) => {
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [onRefresh, pullProgress]);
+  }, [onRefresh]);
 
   return { pullProgress, isRefreshing };
 };

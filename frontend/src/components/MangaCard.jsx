@@ -1,6 +1,7 @@
+// MangaCard v4 — full title, status badge top-right
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, BookOpen, Trash } from 'lucide-react';
+import { Heart, BookOpen, ExternalLink } from 'lucide-react';
 import { getMangaCoverUrl, getMangaTitle, getMangaAuthor } from '../api/mangadex';
 import { useSettingsStore } from '../store/settings';
 import { useFavouritesStore } from '../store/favourites';
@@ -15,12 +16,14 @@ export const MangaCard = ({ manga, showRemoveOption = false }) => {
   const title = getMangaTitle(manga, titleLanguage);
   const author = getMangaAuthor(manga);
   const coverUrl = getMangaCoverUrl(manga, '256');
-  
+
   const contentRating = manga.attributes?.contentRating || 'safe';
   const status = manga.attributes?.status || '';
+  // External reading link (some titles only have external chapters)
+  const links = manga.attributes?.links || {};
+  const externalUrl = links.raw || links.engtl || links.mu || null;
 
   const handleCardClick = (e) => {
-    // Prevent navigating if context menu is open
     if (showContextMenu) {
       setShowContextMenu(false);
       return;
@@ -53,30 +56,52 @@ export const MangaCard = ({ manga, showRemoveOption = false }) => {
     return () => window.removeEventListener('click', closeMenu);
   }, [showContextMenu]);
 
-  // Determine content rating dot color
+  // Content rating dot color
   const getRatingColor = () => {
     switch (contentRating) {
       case 'erotica':
-        return '#FF4C6A'; // --error
+      case 'pornographic':
+        return '#FF4C6A';
       case 'suggestive':
-        return '#FF9F4A'; // --accent-glow
+        return '#FF9F4A';
       case 'safe':
       default:
-        return '#2ECC9A'; // --success
+        return '#2ECC9A';
+    }
+  };
+
+  // Status badge class
+  const getStatusBadgeClass = () => {
+    switch (status) {
+      case 'ongoing':   return 'manga-card-status-badge status-ongoing';
+      case 'completed': return 'manga-card-status-badge status-completed';
+      case 'hiatus':    return 'manga-card-status-badge status-hiatus';
+      case 'cancelled': return 'manga-card-status-badge status-cancelled';
+      default:          return 'manga-card-status-badge status-unknown';
+    }
+  };
+
+  const getStatusLabel = () => {
+    switch (status) {
+      case 'ongoing':   return 'Ongoing';
+      case 'completed': return 'Finished';
+      case 'hiatus':    return 'Hiatus';
+      case 'cancelled': return 'Cancelled';
+      default:          return status || '';
     }
   };
 
   return (
-    <div 
+    <div
       className="manga-card-wrapper tap-scale card-hover"
       onClick={handleCardClick}
       onContextMenu={handleContextMenu}
     >
       <div className="manga-card-cover-container">
         {coverUrl ? (
-          <img 
-            src={coverUrl} 
-            alt={title} 
+          <img
+            src={coverUrl}
+            alt={title}
             loading="lazy"
             decoding="async"
             className="manga-card-image"
@@ -86,36 +111,51 @@ export const MangaCard = ({ manga, showRemoveOption = false }) => {
             <BookOpen size={32} />
           </div>
         )}
-        
-        {/* Rating dot indicator */}
-        <span 
-          className="manga-card-rating-dot" 
+
+        {/* Content rating dot — top-left of cover */}
+        <span
+          className="manga-card-rating-dot"
           style={{ backgroundColor: getRatingColor() }}
           title={`Content Rating: ${contentRating}`}
         />
 
-        {/* Hover overlay with CTA */}
+        {/* Status badge — TOP-RIGHT corner of cover */}
+        {status && (
+          <span className={getStatusBadgeClass()}>
+            {getStatusLabel()}
+          </span>
+        )}
+
+        {/* External link indicator */}
+        {externalUrl && (
+          <span className="manga-card-external-tag" title="Has external reading link">
+            <ExternalLink size={10} />
+            <span>Ext</span>
+          </span>
+        )}
+
+        {/* Hover overlay */}
         <div className="manga-card-overlay">
           <span className="manga-card-overlay-btn">Read Info</span>
         </div>
       </div>
 
       <div className="manga-card-info">
-        <h4 className="manga-card-title" title={title}>
-          {title}
-        </h4>
         <div className="manga-card-meta">
           <span className="manga-card-author">{author}</span>
-          {status && <span className="manga-card-status">{status}</span>}
         </div>
+        {/* Full title — NO truncation */}
+        <h4 className="manga-card-title">
+          {title}
+        </h4>
       </div>
 
-      {/* Context Menu (desktop right click, mobile triggerable) */}
+      {/* Context Menu */}
       {showContextMenu && (
-        <div 
+        <div
           className="manga-card-context-menu glass-panel"
-          style={{ 
-            top: `${menuPosition.y}px`, 
+          style={{
+            top: `${menuPosition.y}px`,
             left: `${menuPosition.x}px`,
             position: 'fixed',
             zIndex: 9999
@@ -130,10 +170,20 @@ export const MangaCard = ({ manga, showRemoveOption = false }) => {
             <BookOpen size={14} />
             <span>Go to Manga</span>
           </button>
+          {externalUrl && (
+            <button onClick={(e) => {
+              e.stopPropagation();
+              window.open(externalUrl, '_blank', 'noopener,noreferrer');
+              setShowContextMenu(false);
+            }}>
+              <ExternalLink size={14} />
+              <span>Read Externally</span>
+            </button>
+          )}
         </div>
       )}
     </div>
   );
 };
 
-export default MangaCard;
+export default React.memo(MangaCard);

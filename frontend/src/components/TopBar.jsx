@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, Search, SlidersHorizontal, X, LayoutGrid } from 'lucide-react';
+import { Menu, Search, SlidersHorizontal, X } from 'lucide-react';
 import { useSettingsStore } from '../store/settings';
 
 export const TopBar = () => {
@@ -24,11 +24,14 @@ export const TopBar = () => {
 
   // Compress topbar on scroll down
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      if (window.scrollY > 40) {
-        setIsCompressed(true);
-      } else {
-        setIsCompressed(false);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsCompressed(window.scrollY > 40);
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
@@ -87,6 +90,9 @@ export const TopBar = () => {
     }
   };
 
+  // Don't show inline search form on /search page — SearchModal has its own full search bar
+  const isSearchPage = location.pathname === '/search';
+
   return (
     <>
       <header className={`topbar glass-panel ${isCompressed ? 'compressed' : ''} ${!isSidePanelOpen ? 'panel-collapsed' : ''}`}>
@@ -128,56 +134,54 @@ export const TopBar = () => {
         </div>
 
         <div className="topbar-right">
-          {/* Full-width search bar expansion */}
-          <form
-            className={`topbar-search-form ${isSearchExpanded ? 'expanded' : ''}`}
-            onSubmit={handleSearchSubmit}
-          >
-            <input
-              ref={searchInputRef}
-              type="text"
-              placeholder="Search manga, authors, artists..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-              className="search-input"
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                className="search-clear-btn"
-                onClick={() => setSearchQuery('')}
-              >
-                <X size={16} />
-              </button>
-            )}
-          </form>
+          {/* Full-width inline search bar — hidden on /search page to prevent double search bars */}
+          {!isSearchPage && (
+            <form
+              className={`topbar-search-form ${isSearchExpanded ? 'expanded' : ''}`}
+              onSubmit={handleSearchSubmit}
+            >
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Search manga, authors, artists..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                className="search-input"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  className="search-clear-btn"
+                  onClick={() => setSearchQuery('')}
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </form>
+          )}
 
+          {/* Search toggle — shows as X on /search to navigate back */}
           <button
-            className={`icon-button categories-nav-btn ${location.pathname === '/categories' ? 'active' : ''}`}
-            onClick={() => navigate('/categories')}
-            aria-label="Browse categories"
-          >
-            <LayoutGrid size={22} />
-          </button>
-
-          <button
-            className={`icon-button search-toggle-btn ${isSearchExpanded ? 'active' : ''}`}
+            className={`icon-button search-toggle-btn ${isSearchExpanded || isSearchPage ? 'active' : ''}`}
             onClick={toggleSearch}
             aria-label="Search manga"
           >
-            {isSearchExpanded ? <X size={22} /> : <Search size={22} />}
+            {(isSearchExpanded || isSearchPage) ? <X size={22} /> : <Search size={22} />}
           </button>
 
-          <button
-            className={`icon-button filter-toggle-btn ${isFilterDrawerOpen ? 'active' : ''}`}
-            onClick={() => setFilterDrawerOpen(!isFilterDrawerOpen)}
-            aria-label="Filter settings"
-          >
-            <SlidersHorizontal size={22} />
-            {activeFiltersCount > 0 && (
-              <span className="filter-badge animate-heartbeat">{activeFiltersCount}</span>
-            )}
-          </button>
+          {/* Filter toggle — hidden on /search because SearchModal has its own filter button */}
+          {!isSearchPage && (
+            <button
+              className={`icon-button filter-toggle-btn ${isFilterDrawerOpen ? 'active' : ''}`}
+              onClick={() => setFilterDrawerOpen(!isFilterDrawerOpen)}
+              aria-label="Filter settings"
+            >
+              <SlidersHorizontal size={22} />
+              {activeFiltersCount > 0 && (
+                <span className="filter-badge animate-heartbeat">{activeFiltersCount}</span>
+              )}
+            </button>
+          )}
 
           <button
             className={`icon-button hamburger-btn ${isSidePanelOpen ? 'panel-open' : ''}`}

@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 
 const initialFilters = {
   status: [], // 'ongoing', 'completed', 'hiatus', 'cancelled'
-  contentRating: ['safe', 'suggestive'], // 'safe', 'suggestive', 'erotica'
+  contentRating: ['safe', 'suggestive', 'erotica', 'pornographic'], // all by default
   demographic: [], // 'shounen', 'shoujo', 'seinen', 'josei', 'none'
   sortBy: 'followedCount', // 'latestUploadedChapter' | 'createdAt' | 'followedCount' | 'rating' | 'relevance'
   sortOrder: 'desc',
@@ -48,8 +48,9 @@ export const useSettingsStore = create(
         const f = get().filters;
         let count = 0;
         if (f.status.length > 0) count += f.status.length;
-        // count contentRating additions/removals from default
-        if (JSON.stringify(f.contentRating.sort()) !== JSON.stringify(['safe', 'suggestive'].sort())) count += 1;
+        // count contentRating additions/removals from default (all = no filter applied)
+        const allRatings = ['safe', 'suggestive', 'erotica', 'pornographic'];
+        if (JSON.stringify([...f.contentRating].sort()) !== JSON.stringify([...allRatings].sort())) count += 1;
         if (f.demographic.length > 0) count += f.demographic.length;
         if (f.sortBy !== 'followedCount') count += 1;
         if (f.languages.length > 0 && JSON.stringify(f.languages) !== JSON.stringify(['en'])) count += f.languages.length;

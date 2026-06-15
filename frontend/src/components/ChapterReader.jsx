@@ -22,6 +22,8 @@ export const ChapterReader = () => {
 
   const uiTimeout = useRef(null);
   const pageRefs = useRef([]);
+  const touchStartX = useRef(null);
+  const touchStartY = useRef(null);
 
   // 1. Fetch Chapter Images
   const { data: chapterData, isLoading: imagesLoading, isError: imagesError, refetch: refetchImages } = useQuery({
@@ -88,7 +90,12 @@ export const ChapterReader = () => {
 
   // 4. Auto-hide Top/Bottom UI after 2s scroll
   useEffect(() => {
+    let lastScrollTime = 0;
     const handleScroll = () => {
+      const now = Date.now();
+      if (now - lastScrollTime < 100) return;
+      lastScrollTime = now;
+
       // Clear previous timer
       if (uiTimeout.current) clearTimeout(uiTimeout.current);
 
@@ -177,6 +184,41 @@ export const ChapterReader = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [prevChapterId, nextChapterId]);
+
+  // Mobile swipe gesture navigation (horizontal swipe = chapter nav)
+  useEffect(() => {
+    const handleTouchStart = (e) => {
+      touchStartX.current = e.changedTouches[0].screenX;
+      touchStartY.current = e.changedTouches[0].screenY;
+    };
+
+    const handleTouchEnd = (e) => {
+      if (touchStartX.current === null) return;
+      const dx = e.changedTouches[0].screenX - touchStartX.current;
+      const dy = Math.abs(e.changedTouches[0].screenY - touchStartY.current);
+
+      // Only treat as horizontal swipe if dx > 60px AND horizontal motion > vertical
+      if (Math.abs(dx) > 60 && Math.abs(dx) > dy) {
+        if (dx < 0 && nextChapterId) {
+          // Swipe left = next chapter
+          handleNavigateToChapter(nextChapterId);
+        } else if (dx > 0 && prevChapterId) {
+          // Swipe right = prev chapter
+          handleNavigateToChapter(prevChapterId);
+        }
+      }
+
+      touchStartX.current = null;
+      touchStartY.current = null;
+    };
+
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+    return () => {
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
   }, [prevChapterId, nextChapterId]);
 
   const handleNavigateToChapter = (targetId) => {
@@ -286,7 +328,7 @@ export const ChapterReader = () => {
     <div className="reader-workspace" onClick={handleScreenTap}>
       
       {/* 1. Auto-Hiding Top Bar */}
-      <header className={`reader-topbar glass-panel ${showUi ? 'topbar-show' : 'topbar-hide'}`}>
+      <header className={`reader-topbar glass-panel ${showUi ? '' : 'hidden'}`}>
         <button className="icon-button" onClick={() => navigate(`/manga/${mangaId}`)} aria-label="Exit reader">
           <ArrowLeft size={20} />
         </button>
@@ -335,7 +377,7 @@ export const ChapterReader = () => {
       </main>
 
       {/* 2. Auto-Hiding Bottom Progress indicator */}
-      <footer className={`reader-bottombar glass-panel ${showUi ? 'bottombar-show' : 'bottombar-hide'}`}>
+      <footer className={`reader-bottombar glass-panel ${showUi ? '' : 'hidden'}`}>
         <div className="bottombar-content">
           <div className="sibling-nav-controls">
             <button 

@@ -5,8 +5,8 @@ export const SkeletonCard = () => {
     <div className="skeleton-card">
       <div className="skeleton-cover animate-shimmer" />
       <div className="skeleton-details">
-        <div className="skeleton-line skeleton-title animate-shimmer" />
         <div className="skeleton-line skeleton-subtitle animate-shimmer" />
+        <div className="skeleton-line skeleton-title animate-shimmer" />
       </div>
     </div>
   );

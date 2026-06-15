@@ -63,7 +63,7 @@ const Search = () => {
   const fetchManga = useCallback(async (currentOffset = 0, append = false) => {
     try {
       setLoading(true);
-      let url = `/api/manga?limit=${LIMIT}&offset=${currentOffset}&includes[]=cover_art&includes[]=author&contentRating[]=safe&contentRating[]=suggestive`;
+      let url = `/api/manga?limit=${LIMIT}&offset=${currentOffset}&includes[]=cover_art&includes[]=author`;
 
       if (debouncedQuery.trim()) {
         url += `&title=${encodeURIComponent(debouncedQuery)}`;

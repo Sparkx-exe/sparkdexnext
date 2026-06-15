@@ -232,7 +232,7 @@ export const FilterDrawer = () => {
           <div className="filter-group">
             <h4 className="filter-group-title">Content Rating</h4>
             <div className="chips-wrapper">
-              {['safe', 'suggestive', 'erotica'].map((rating) => {
+              {['safe', 'suggestive', 'erotica', 'pornographic'].map((rating) => {
                 const active = localFilters.contentRating.includes(rating);
                 return (
                   <button

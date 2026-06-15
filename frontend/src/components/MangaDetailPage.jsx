@@ -42,7 +42,7 @@ export const MangaDetailPage = () => {
 
   const availableLanguages = manga?.attributes?.availableTranslatedLanguages || ['en'];
 
-  // Initialize selected language to English if available, else first language
+  // Initialize selected language to English if available, else 'all'
   useEffect(() => {
     if (availableLanguages.length > 0) {
       if (availableLanguages.includes('en')) {
@@ -63,11 +63,12 @@ export const MangaDetailPage = () => {
     isError: feedError,
   } = useInfiniteQuery({
     queryKey: ['mangaChapters', id, selectedLanguage, sortOrder],
-    queryFn: ({ pageParam = 0 }) => getMangaFeed(id, { 
-      offset: pageParam, 
-      limit: 100, 
-      languages: [selectedLanguage], 
-      order: sortOrder 
+    queryFn: ({ pageParam = 0 }) => getMangaFeed(id, {
+      offset: pageParam,
+      limit: 100,
+      // 'all' sentinel tells the API client to skip language filtering
+      languages: selectedLanguage === 'all' ? ['all'] : [selectedLanguage],
+      order: sortOrder
     }),
     getNextPageParam: (lastPage, allPages) => {
       const total = lastPage.total || 0;
@@ -277,6 +278,8 @@ export const MangaDetailPage = () => {
                     onChange={(e) => setSelectedLanguage(e.target.value)}
                     className="chapter-lang-select"
                   >
+                    {/* All Languages option */}
+                    <option value="all">🌐 All Languages</option>
                     {availableLanguages.map((lang) => (
                       <option key={lang} value={lang}>
                         {lang.toUpperCase()}

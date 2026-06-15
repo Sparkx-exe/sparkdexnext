@@ -82,7 +82,6 @@ export const Home = () => {
           fetchParams={{
             status: ['ongoing'],
             'order[followedCount]': 'desc',
-            'contentRating[]': ['safe', 'suggestive'],
           }}
         />
 
@@ -95,7 +94,6 @@ export const Home = () => {
           fetchFn={getMangaList}
           fetchParams={{
             'order[createdAt]': 'desc',
-            'contentRating[]': ['safe', 'suggestive'],
           }}
         />
 
@@ -110,7 +108,6 @@ export const Home = () => {
             fetchParams={{
               includedTags: seasonalTagIds,
               'order[followedCount]': 'desc',
-              'contentRating[]': ['safe', 'suggestive'],
             }}
           />
         )}
@@ -154,7 +151,6 @@ export const Home = () => {
           fetchFn={getMangaList}
           fetchParams={{
             'order[latestUploadedChapter]': 'desc',
-            'contentRating[]': ['safe', 'suggestive'],
           }}
         />
 
