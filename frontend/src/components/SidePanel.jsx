@@ -134,6 +134,11 @@ export const SidePanel = () => {
       <div 
         className={`sidepanel-scrim ${isSidePanelOpen ? 'visible' : ''}`} 
         onClick={() => setSidePanelOpen(false)}
+        onTouchStart={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setSidePanelOpen(false);
+        }}
       />
 
       <aside className={`sidepanel glass-panel ${isSidePanelOpen ? 'open' : 'collapsed'}`}>
@@ -141,6 +146,11 @@ export const SidePanel = () => {
         <button 
           className="sidepanel-close-btn" 
           onClick={() => setSidePanelOpen(false)}
+          onTouchStart={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setSidePanelOpen(false);
+          }}
           aria-label="Close Side Panel"
         >
           <X size={20} />

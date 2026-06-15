@@ -3840,7 +3840,8 @@ input:checked + .switch-slider:before {
 .manga-card-image,
 .glass-panel,
 .top-bar,
-.side-panel,
+.sidepanel,
+.sidepanel-close-btn,
 .filter-drawer,
 .banner-carousel-container,
 .slide-cover-art,
@@ -3862,7 +3863,7 @@ input:checked + .switch-slider:before {
 .manga-card-image {
   will-change: transform;
 }
-.side-panel,
+.sidepanel,
 .filter-drawer {
   will-change: transform;
 }
